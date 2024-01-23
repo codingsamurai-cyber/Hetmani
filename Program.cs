@@ -1,80 +1,93 @@
-﻿Hetmani hetmani = new Hetmani();
-//hetmani.Koloruj();
-hetmani.isSafe(7, 7);
-hetmani.Wstawianie();
-hetmani.Rysuj();
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-class Hetmani
+namespace Queens
 {
-    public int[,] plansza = new int[8, 8];
-
-    public bool isSafe(int row, int col)
+    internal class Program
     {
-        //sprawdza czy w jednym rzedzie jest hetman
-        for (int i = 0; i < 8 && i >= 0; i++)
+        static void Main(string[] args)
         {
-            if (plansza[row, i] == 1)
-            {
-                return false;
-            }
-        }
-        //sprawdza w pionie
-        for (int x = row, y = col; x >= 0 && y < 8; x--)
-        {
-            if (plansza[x, y] == 1)
-            {
-                return false;
-            }
-        }
-        //sprawdza czy w skosie prawy gorny-lewy dolny
-        for (int x = row, y = col; x >= 0 && x < 8 && y < 8 && y >= 0; x--, y++)
-        {
-            if (plansza[x, y] == 1)
-            {
-                return false;
-            }
-        }
-        //sprawdza czy w skosie prawy dolny-lewy gorny
-        for (int x = row, y = col; x < 8 && x >= 0 && y < 8 && y >= 0; x--, y--)
-        {
-            if (plansza[x, y] == 1)
-            {
-                return false;
-            }
-        }
+            int[,] board = new int[8, 8];
 
-        return true;
-    }
+            isSafe(7, 7);
+            Solve(0);
+            Draw();
 
-    public void Rysuj()
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
+            void Draw()
             {
-                Console.Write(plansza[i, j] + "   ");
-            }
-            Console.WriteLine("");
-            Console.WriteLine("");
-        }
-    }
-
-    public void Wstawianie()
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                if (isSafe(i, j))
+                for (int i = 0; i < 8; i++)
                 {
-                    plansza[i, j] = 1;
+                    for(int j = 0; j < 8; j++)
+                    {
+                        Console.Write(board[i, j] + "   ");
+                    }
+                    Console.WriteLine("");
+                    Console.WriteLine("");
                 }
-            }   
+            }
+
+            bool Solve(int col)
+            {
+                if (col >= 8)
+                {
+                    return true;
+                }
+
+                for (int i = 0; i < 8; i++)
+                {
+                    if (isSafe(i, col))
+                    {
+                        board[i, col] = 1;
+
+                        if (Solve(col + 1))
+                        {
+                            return true;
+                        }
+
+                        board[i, col] = 0; // backtrack
+                    }
+                }
+                return false;
+            }
+                bool isSafe(int row, int col)
+            {
+                //Checks whether there's a queen in a row 
+                for (int x = 0; x < 8; x++)
+                {
+                    if (board[row, x] == 1)
+                    {
+                        return false;
+                    }
+                }
+                //Checks whether there's a queen in a column
+                for (int x = row, y = col; x < 8 && x >= 0 && y < 8 && y >= 0; x--)
+                {
+                    if (board[x, y] == 1)
+                    {
+                        return false;
+                    }
+                }
+                //Checks whether there's a queen in a upper right to lower left diagonal
+                for (int x = row, y = col; x >= 0 && y >= 0; x--, y--)
+                {
+                    if (board[x, y] == 1)
+                    {
+                        return false;
+                    }
+                }
+                //Checks whether there's a queen in a lower right to upper left diagonal
+                for(int x = row, y = col; x < 8 && y >= 0; x++, y--)
+                {
+                    if (board[x, y] == 1)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
     }
-
-    //public void Koloruj()
-    //{
-    //    Console.BackgroundColor = ConsoleColor.White;
-    //}
 }
